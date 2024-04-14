@@ -152,7 +152,7 @@ fn add_images(ui: &mut UiCommands, path: &StyleRef, parent: Entity)
 
 fn build_ui(mut cmds: Commands)
 {
-    let file = StyleRef::from_file("examples/sample.style.json");
+    let file = StyleRef::from_file("examples/sample.style.ron");
 
     cmds.root_node(file.e("root"), |root, path| {
         root.child_node(path.e("a"), |_n, _p|{})
@@ -188,7 +188,7 @@ fn main()
             )
         )
         .add_plugins(CobwebUiPlugin)
-        .add_style_sheet("examples/sample.style.json")
+        .add_style_sheet("examples/sample.style.ron")
         .insert_resource(bevy::winit::WinitSettings::desktop_app())
         .add_systems(PreStartup, setup)
         .add_systems(Startup, build_ui)

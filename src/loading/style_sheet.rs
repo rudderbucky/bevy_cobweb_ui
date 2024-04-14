@@ -96,7 +96,7 @@ struct ErasedStyle
 pub(crate) enum ReflectedStyle
 {
     Value(Arc<Box<dyn Reflect + 'static>>),
-    DeserializationFailed(Arc<serde_json::Error>),
+    DeserializationFailed(Arc<ron::Error>),
 }
 
 impl ReflectedStyle
@@ -117,7 +117,7 @@ impl ReflectedStyle
                 else
                 {
                     let temp = T::default();
-                    let hint = serde_json::to_string(&temp).unwrap();
+                    let hint = ron::to_string(&temp).unwrap();
                     tracing::error!("failed reflecting style {:?} at path {:?} in file {:?}\n\
                         serialization hint: {:?}",
                         type_name::<T>(), style_ref.path.path, style_ref.file, hint);
@@ -128,7 +128,7 @@ impl ReflectedStyle
             ReflectedStyle::DeserializationFailed(err) =>
             {
                 let temp = T::default();
-                let hint = serde_json::to_string(&temp).unwrap();
+                let hint = ron::to_string(&temp).unwrap();
                 tracing::error!("failed deserializing style {:?} at path {:?} in file {:?}, {:?}\n\
                     serialization hint: {:?}",
                     type_name::<T>(), style_ref.path.path, style_ref.file, **err, hint);

@@ -3,7 +3,6 @@ use crate::*;
 use bevy::prelude::*;
 use bevy::asset::io::Reader;
 use bevy::asset::{Asset, AssetApp, AssetLoader, AsyncReadExt, BoxedFuture, LoadContext};
-use serde_json::from_slice;
 use thiserror::Error;
 
 use std::collections::HashMap;
@@ -29,10 +28,10 @@ impl AssetLoader for StyleSheetAssetLoader
         Box::pin(
             async move
             {
-                let mut bytes = Vec::new();
-                reader.read_to_end(&mut bytes).await?;
+                let mut bytes = String::new();
+                reader.read_to_string(&mut bytes).await?;
                 //todo: replace this with custom parsing that only allocates where absolutely necessary
-                let data: serde_json::Value = from_slice(&bytes)?;
+                let data: ron::Value = ron::from_str(&bytes)?;
                 Ok(StyleSheetAsset{ file: StyleFile::new(&load_context.asset_path().path().to_string_lossy()), data })
             }
         )
@@ -40,7 +39,7 @@ impl AssetLoader for StyleSheetAssetLoader
 
     fn extensions(&self) -> &[&str]
     {
-        &[".style.json"]
+        &[".style.ron"]
     }
 }
 
@@ -72,9 +71,9 @@ pub enum StyleSheetAssetLoaderError
     /// An [IO Error](std::io::Error).
     #[error("Could not read the stylesheet file: {0}")]
     Io(#[from] std::io::Error),
-    /// A [JSON Error](serde_json::error::Error).
-    #[error("Could not parse the stylesheet JSON: {0}")]
-    JsonError(#[from] serde_json::error::Error),
+    /// A [RON Error](ron::error::Error).
+    #[error("Could not parse the stylesheet RON: {0}")]
+    RonError(#[from] ron::error::SpannedError),
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -84,7 +83,7 @@ pub enum StyleSheetAssetLoaderError
 pub(crate) struct StyleSheetAsset
 {
     pub(crate) file: StyleFile,
-    pub(crate) data: serde_json::Value,
+    pub(crate) data: ron::Value,
 }
 
 //-------------------------------------------------------------------------------------------------------------------

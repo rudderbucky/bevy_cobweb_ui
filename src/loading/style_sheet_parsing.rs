@@ -3,7 +3,7 @@ use crate::*;
 use bevy::reflect::TypeRegistry;
 use bevy::reflect::serde::TypedReflectDeserializer;
 use serde::de::DeserializeSeed;
-use serde_json::{Map, Value};
+use ron::{Map, Value};
 
 use std::any::TypeId;
 use std::collections::HashMap;
@@ -133,7 +133,7 @@ fn handle_using_entry(
     value          : Value,
     name_shortcuts : &mut HashMap<&'static str, &'static str>,
 ){
-    let Value::Array(longnames) = value
+    let Value::Seq(longnames) = value
     else
     {
         tracing::error!("failed parsing 'using' section in {:?}, it is not an Array", file);
@@ -212,7 +212,7 @@ fn handle_branch_entry(
     style_stack    : &mut HashMap<&'static str, Vec<ReflectedStyle>>,
     stack_trackers : &mut Vec<Vec<(&'static str, usize)>>,
 ){
-    let Value::Object(data) = value
+    let Value::Map(data) = value
     else
     {
         tracing::error!("failed parsing extension {:?} at {:?} in {:?}, extension is not an Object",
@@ -242,7 +242,7 @@ fn parse_branch(
     stylesheet     : &mut StyleSheet,
     file           : &StyleFile,
     current_path   : &StylePath,
-    mut data       : Map<String, Value>,
+    mut data       : Map,
     depth          : usize,
     name_shortcuts : &mut HashMap<&'static str, &'static str>,
     style_stack    : &mut HashMap<&'static str, Vec<ReflectedStyle>>,
@@ -252,7 +252,13 @@ fn parse_branch(
 
     for (count, (key, value)) in data.iter_mut().enumerate()
     {
-        let value = value.take();
+        let Value::String(key) = key
+        else
+        {
+            tracing::warn!("ignoring non-string key in stylesheet {:?} at {:?}", file, current_path);
+            continue;
+        };
+        let value = std::mem::replace(value, Value::Unit);
 
         if is_using_entry(depth, count, key)
         {
@@ -313,7 +319,7 @@ pub(crate) fn parse_stylesheet_file(type_registry: &TypeRegistry, stylesheet: &m
     tracing::info!("parsing stylesheet {:?}", file.file);
     stylesheet.initialize_file(file.clone());
 
-    let Value::Object(data) = data
+    let Value::Map(data) = data
     else
     {
         tracing::error!("failed parsing stylesheet {:?}, data base layer is not an Object", file);
