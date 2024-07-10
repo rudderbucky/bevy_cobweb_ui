@@ -21,7 +21,7 @@ impl AssetLoader for CobwebAssetLoader
 
     async fn load<'a>(
         &'a self,
-        reader: &'a mut dyn Reader,
+        reader: &'a mut dyn Reader<'_>,
         _settings: &'a (),
         load_context: &'a mut LoadContext<'_>,
     ) -> Result<Self::Asset, Self::Error>
