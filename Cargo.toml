@@ -34,7 +34,8 @@ hot_reload = ["bevy/file_watcher"]
 dev = ["hot_reload", "bevy/dynamic_linking"]
 
 [dependencies]
-bevy        = { version = "0.14", default-features = true, features = ["serialize"] }
+#bevy        = { version = "0.14", default-features = true, features = ["serialize"] }
+bevy = { git = "https://github.com/bevyengine/bevy/", branch = "main", default-features = true, features = ["serialize"] }
 bevy_cobweb = { version = "0.9" }
 serde       = { version = "1.0" }
 serde_json  = { version = "1.0", features = ["preserve_order"] }
@@ -43,8 +44,7 @@ smallvec    = { version = "1.13" }
 thiserror   = { version = "1.0" }
 tracing     = { version = "0.1" }
 
-sickle_ui = { rev = "a0f42b2", git = "https://github.com/dead-money/sickle_ui" }
-#sickle_ui = { rev = "2093be0", git = "https://github.com/UmbraLuminosa/sickle_ui" }
+sickle_ui = { rev = "ca232db", git = "https://github.com/UmbraLuminosa/sickle_ui" }
 #sickle_ui = { rev = "7ee7327", git = "https://github.com/UkoeHB/sickle_ui" }
 
 # Localization deps
@@ -59,6 +59,12 @@ unic-langid = { version = "0.9", features = ["serde", "unic-langid-macros"] }
 
 # Local sub-crates
 bevy_cobweb_ui_derive = { path = "bevy_cobweb_ui_derive", version = "0.1.0" }
+
+[patch.crates-io]
+bevy_cobweb = { git = "https://github.com/UkoeHB/bevy_cobweb/", branch = "bevy_main" }
+
+[patch."https://github.com/UmbraLuminosa/sickle_ui"]
+sickle_ui = { git = "https://github.com/UkoeHB/sickle_ui/", branch = "bevy_main" }
 
 [dev-dependencies]
 tracing-subscriber = { version = "0.3" }

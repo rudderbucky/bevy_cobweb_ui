@@ -56,7 +56,7 @@ async fn load_ftl_bundle_contents(
     // - https://github.com/projectfluent/fluent-rs/issues/172
     // - https://docs.rs/fluent-bundle/0.15.3/fluent_bundle/bundle/struct.FluentBundle.html#method.set_use_isolating
     // - https://unicode.org/reports/tr9/#Explicit_Directional_Isolates
-    bundle.set_use_isolating(false);
+    //bundle.set_use_isolating(false);
     tracing::debug!("loaded FluentBundle with .set_use_isolating(false), directional isolates not supported by \
         bevy_text");
 
@@ -81,7 +81,7 @@ impl AssetLoader for FtlResourceLoader
 
     async fn load<'a>(
         &'a self,
-        reader: &'a mut Reader<'_>,
+        reader: &'a mut dyn Reader,
         _: &'a Self::Settings,
         _: &'a mut LoadContext<'_>,
     ) -> Result<Self::Asset, Self::Error>
@@ -124,7 +124,7 @@ impl AssetLoader for FtlBundleLoader
 
     async fn load<'a>(
         &'a self,
-        reader: &'a mut Reader<'_>,
+        reader: &'a mut dyn Reader,
         _: &'a Self::Settings,
         load_context: &'a mut LoadContext<'_>,
     ) -> Result<Self::Asset, Self::Error>

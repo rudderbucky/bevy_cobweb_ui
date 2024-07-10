@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use bevy::asset::io::Reader;
-use bevy::asset::{Asset, AssetApp, AssetLoader, AsyncReadExt, LoadContext};
+use bevy::asset::{Asset, AssetApp, AssetLoader, LoadContext};
 use bevy::prelude::*;
 use bevy_cobweb::prelude::*;
 use serde_json::from_slice;
@@ -21,7 +21,7 @@ impl AssetLoader for CobwebAssetLoader
 
     async fn load<'a>(
         &'a self,
-        reader: &'a mut Reader<'_>,
+        reader: &'a mut dyn Reader,
         _settings: &'a (),
         load_context: &'a mut LoadContext<'_>,
     ) -> Result<Self::Asset, Self::Error>

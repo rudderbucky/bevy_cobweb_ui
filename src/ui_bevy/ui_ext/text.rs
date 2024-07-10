@@ -1,6 +1,6 @@
 use bevy::ecs::system::EntityCommands;
 use bevy::prelude::*;
-use bevy::text::TextLayoutInfo;
+use bevy::text::{CosmicBuffer, TextLayoutInfo};
 use bevy::ui::widget::TextFlags;
 use bevy::ui::ContentSize;
 use bevy_cobweb::prelude::*;
@@ -22,11 +22,13 @@ fn insert_text_line(
         .map(|c| c.0)
         .unwrap_or_else(|_| TextLine::default_font_color());
     let mut ec = commands.entity(entity);
+tracing::error!("inserting {:?}", line);
     ec.try_insert((
         line.as_text(&mut font_map, color),
         TextLayoutInfo::default(),
         TextFlags::default(),
         ContentSize::default(),
+        CosmicBuffer::default(),
     ));
 }
 
